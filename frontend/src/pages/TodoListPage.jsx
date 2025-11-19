@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import Header from '../components/Header';
 import TodoForm from '../components/TodoForm';
 import TodoList from '../components/TodoList';
@@ -33,19 +34,19 @@ const TodoListPage = () => {
     try {
       const url = new URL(`${API_URL}/get`);
       url.searchParams.append('page', page);
-      url.searchParams.append('limit', 4);
+      url.searchParams.append('limit', 6);
       if (status) url.searchParams.append('status', status);
 
       const response = await fetch(url);
       const data = await response.json();
-      
+
       setTodos(data.data);
       setCurrentPage(data.pagination.page);
       setTotalPages(data.pagination.pages);
       setTotalTodos(data.pagination.total);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching todos:', error);
-    } finally {
       setLoading(false);
     }
   };
@@ -60,12 +61,19 @@ const TodoListPage = () => {
 
     setLoading(true);
     try {
-      await fetch(`${API_URL}/delete_id/${id}`, {
+      const response = await fetch(`${API_URL}/delete_id/${id}`, {
         method: 'DELETE'
       });
-      fetchTodos(currentPage, statusFilter);
+      
+      if (response.ok) {
+        toast.success('Todo deleted successfully');
+        fetchTodos(currentPage, statusFilter);
+      } else {
+        toast.error('Failed to delete todo');
+      }
     } catch (error) {
       console.error('Error deleting todo:', error);
+      toast.error('Error deleting todo');
     } finally {
       setLoading(false);
     }
@@ -78,8 +86,11 @@ const TodoListPage = () => {
 
   // Event handlers for components
   const handleStatusFilterChange = (filter) => {
-    setStatusFilter(filter);
+    setLoading(true);
     setCurrentPage(1);
+    setTimeout(() => {
+      setStatusFilter(filter);
+    }, 2000);
   };
 
   const handleAddTodo = () => {
@@ -107,12 +118,14 @@ const TodoListPage = () => {
             <EmptyState statusFilter={statusFilter} />
           )}
 
-          <TodoList 
-            todos={todos}
-            onEdit={startEdit}
-            onDelete={handleDelete}
-            loading={loading}
-          />
+          {!loading && todos.length > 0 && (
+            <TodoList 
+              todos={todos}
+              onEdit={startEdit}
+              onDelete={handleDelete}
+              loading={loading}
+            />
+          )}
 
           <Pagination 
             currentPage={currentPage}

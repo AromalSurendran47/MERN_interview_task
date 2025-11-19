@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const API_URL = 'http://localhost:3001';
 
@@ -25,10 +26,14 @@ const CreateTodoPage = () => {
       });
 
       if (response.ok) {
+        toast.success('Todo created successfully!');
         navigate('/');
+      } else {
+        toast.error('Failed to create todo');
       }
     } catch (error) {
       console.error('Error creating todo:', error);
+      toast.error('Error creating todo');
     } finally {
       setLoading(false);
     }

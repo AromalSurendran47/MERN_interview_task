@@ -47,7 +47,7 @@ const TodoForm = ({
               value={currentData.title || ''}
               onChange={(e) => handleChange('title', e.target.value)}
               placeholder="What needs to be done?"
-              className="form-input"
+              className="form-input text-black"
               required
               disabled={loading}
             />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const API_URL = 'http://localhost:3001';
 
@@ -26,10 +27,12 @@ const EditTodoPage = () => {
             status: todo.status
           });
         } else {
+          toast.error('Todo not found');
           navigate('/');
         }
       } catch (error) {
         console.error('Error fetching todo:', error);
+        toast.error('Error loading todo');
         navigate('/');
       } finally {
         setFetching(false);
@@ -52,10 +55,14 @@ const EditTodoPage = () => {
       });
 
       if (response.ok) {
+        toast.success('Todo updated successfully!');
         navigate('/');
+      } else {
+        toast.error('Failed to update todo');
       }
     } catch (error) {
       console.error('Error updating todo:', error);
+      toast.error('Error updating todo');
     } finally {
       setLoading(false);
     }

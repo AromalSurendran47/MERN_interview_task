@@ -86,7 +86,7 @@ const Pagination = ({
       {totalTodos > 0 && (
         <div className="pagination-info">
           <span className="info-text">
-            Showing {((currentPage - 1) * 4) + 1}-{Math.min(currentPage * 4, totalTodos)} of {totalTodos} tasks
+            Showing {((currentPage - 1) * 6) + 1}-{Math.min(currentPage * 6, totalTodos)} of {totalTodos} tasks
           </span>
           <span className="page-info">
             Page {currentPage} of {totalPages}
